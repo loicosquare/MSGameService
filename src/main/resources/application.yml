@@ -1,0 +1,12 @@
+server:
+  port: 8087
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017
+      database: game-service
+  application:
+    name: GAME-SERVICE
+  config:
+    import: optional:configserver:http://localhost:8085/
