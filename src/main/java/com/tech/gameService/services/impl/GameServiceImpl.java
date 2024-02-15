@@ -183,7 +183,7 @@ public class GameServiceImpl implements GameService {
     public HttpResponse<Game> getAllGames() throws GameNotFoundException {
         logger.info("Fetching all the Games from the database");
         List<Game> games;
-        games = gameRepository.findAll().stream().toList();
+        games = gameRepository.findAll().stream().filter(Objects::nonNull).toList();
 
         //Rating[] foundedRating = restTemplate.getForObject("http://RATING-SERVICE/ratings/" , Rating[].class);
 
@@ -201,7 +201,7 @@ public class GameServiceImpl implements GameService {
                 logger.info("All the Ratings are fetched from the database");
                 for (Game game : games) {
                     for (Rating rating : ratings) {
-                        if (rating.getGameId().equals(game.getGameId())) {
+                        if (rating.getGameId() != null && rating.getGameId().equals(game.getGameId())) {
                             //game.setRatings(Collections.singletonList(rating));
                             game.setRatings(List.of(rating));
                         }

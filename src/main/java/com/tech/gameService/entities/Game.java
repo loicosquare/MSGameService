@@ -33,4 +33,5 @@ public class Game {
     private String categoryId; // Référence à la catégorie à laquelle appartient le jeu.
     //@Transient //not to be stored in db
     private List<Rating> ratings=new ArrayList<>();
+    private String userId;
 }
