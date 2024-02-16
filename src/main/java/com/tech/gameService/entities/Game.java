@@ -1,5 +1,6 @@
 package com.tech.gameService.entities;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tech.gameService.externalEntities.Rating;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Document("games")
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Game {
     @Id
     @NonNull

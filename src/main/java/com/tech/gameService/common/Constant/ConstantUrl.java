@@ -24,4 +24,6 @@ public class ConstantUrl {
         public static final String DELETE_CATEGORY = "/delete/{categoryId}";
         public static final String CREATE_CATEGORY = "/create";
     /* End URL Related to categories. */
+
+    public static final String RATINGS = "ratings";
 }

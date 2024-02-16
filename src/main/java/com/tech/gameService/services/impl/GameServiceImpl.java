@@ -1,12 +1,15 @@
 package com.tech.gameService.services.impl;
 
 import com.tech.gameService.common.entities.HttpResponse;
+import com.tech.gameService.common.exception.GenericException;
 import com.tech.gameService.common.exception.game.GameExistException;
 import com.tech.gameService.common.exception.game.GameNotFoundException;
+import com.tech.gameService.config.UrlAPIConfiguration;
 import com.tech.gameService.entities.Game;
 import com.tech.gameService.externalEntities.Rating;
 import com.tech.gameService.repository.GameRepository;
 import com.tech.gameService.services.GameService;
+import com.tech.gameService.utils.UtilsAppelAPI;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,13 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.tech.gameService.common.Constant.ConstantUrl.TEMP_IMAGE_BASE_URL;
+import static com.tech.gameService.common.Constant.ConstantUrl.*;
 import static java.util.Collections.singleton;
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -31,6 +35,7 @@ public class GameServiceImpl implements GameService {
 
     private final GameRepository gameRepository;
     private final RestTemplate restTemplate;
+    private final UrlAPIConfiguration urlAPI;
     private static final Logger logger = LoggerFactory.getLogger(GameServiceImpl.class);
 
     /**
@@ -180,27 +185,33 @@ public class GameServiceImpl implements GameService {
      * @return List<Game> : All games in database (MongoDB) as a list.
      */
     @Override
-    public HttpResponse<Game> getAllGames() throws GameNotFoundException {
+    public HttpResponse<Game> getAllGames() throws GameNotFoundException, GenericException {
         logger.info("Fetching all the Games from the database");
         List<Game> games;
         games = gameRepository.findAll().stream().filter(Objects::nonNull).toList();
 
-        //Rating[] foundedRating = restTemplate.getForObject("http://RATING-SERVICE/ratings/" , Rating[].class);
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(urlAPI.getUrlApiRating())
+                .pathSegment(RATINGS);
+        String url = builder.toUriString();
+        //Rating[] response = UtilsAppelAPI.callAPIWithMethod(url, HttpMethod.GET, null, Rating[].class);
+
+        // TODO : Rating[] foundedRating = restTemplate.getForObject("http://RATING-SERVICE/ratings/" , Rating[].class);
 
         //TODO : Faire une méthode pour récupérer les Ratings en fonction de l'ID du jeu. (Regarder la différence entre getForObject et exchange).
-        ResponseEntity<Rating[]> response = restTemplate.exchange(
+        Rating[] response = restTemplate.exchange(
                 "http://RATING-SERVICE/ratings/",
                 HttpMethod.GET,
                 null,
                 Rating[].class
-        );
-        Rating[] ratings = response.getBody();
+        ).getBody();
+        //Rating[] ratings = response.getBody(); //Pour laisser ca il faut mettre la reponse comme ResponseEntity<HttpResponse>
 
         try {
-            if (ratings != null) {
+            if (response != null) {
                 logger.info("All the Ratings are fetched from the database");
                 for (Game game : games) {
-                    for (Rating rating : ratings) {
+                    for (Rating rating : response) {
                         if (rating.getGameId() != null && rating.getGameId().equals(game.getGameId())) {
                             //game.setRatings(Collections.singletonList(rating));
                             game.setRatings(List.of(rating));

@@ -3,6 +3,7 @@ package com.tech.gameService.controller;
 import com.tech.gameService.common.entities.HttpResponse;
 import com.tech.gameService.common.exception.ExceptionHandling;
 import com.tech.gameService.common.Constant.ConstantUrl;
+import com.tech.gameService.common.exception.GenericException;
 import com.tech.gameService.common.exception.game.GameExistException;
 import com.tech.gameService.common.exception.game.GameNotFoundException;
 import com.tech.gameService.entities.Game;
@@ -25,7 +26,7 @@ public class GameController extends ExceptionHandling {
     private final GameService gameService;
 
     @GetMapping(value = {ConstantUrl.GET_ALL_GAME})
-    public ResponseEntity<HttpResponse<Game>> getAllGames() throws GameNotFoundException {
+    public ResponseEntity<HttpResponse<Game>> getAllGames() throws GameNotFoundException, GenericException {
         HttpResponse<Game> allGames = gameService.getAllGames();
         if (allGames != null && !allGames.getGames().isEmpty()){
             return ResponseEntity.status(HttpStatus.OK).body(allGames);
