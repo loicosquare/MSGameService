@@ -192,26 +192,27 @@ public class GameServiceImpl implements GameService {
 
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(urlAPI.getUrlApiRating())
-                .pathSegment(RATINGS);
+                .path(RATINGS + SLASH);
         String url = builder.toUriString();
-        //Rating[] response = UtilsAppelAPI.callAPIWithMethod(url, HttpMethod.GET, null, Rating[].class);
+
+        Rating[]  response1 = UtilsAppelAPI.callAPIWithMethod(url, HttpMethod.GET, null, Rating[].class);
 
         // TODO : Rating[] foundedRating = restTemplate.getForObject("http://RATING-SERVICE/ratings/" , Rating[].class);
 
         //TODO : Faire une méthode pour récupérer les Ratings en fonction de l'ID du jeu. (Regarder la différence entre getForObject et exchange).
-        Rating[] response = restTemplate.exchange(
+        /*Rating[] response = restTemplate.exchange(
                 "http://RATING-SERVICE/ratings/",
                 HttpMethod.GET,
                 null,
                 Rating[].class
         ).getBody();
-        //Rating[] ratings = response.getBody(); //Pour laisser ca il faut mettre la reponse comme ResponseEntity<HttpResponse>
+        //Rating[] ratings = response.getBody(); //Pour laisser ca il faut mettre la reponse comme ResponseEntity<HttpResponse>*/
 
         try {
-            if (response != null) {
+            if (response1 != null) {
                 logger.info("All the Ratings are fetched from the database");
                 for (Game game : games) {
-                    for (Rating rating : response) {
+                    for (Rating rating : response1) {
                         if (rating.getGameId() != null && rating.getGameId().equals(game.getGameId())) {
                             //game.setRatings(Collections.singletonList(rating));
                             game.setRatings(List.of(rating));

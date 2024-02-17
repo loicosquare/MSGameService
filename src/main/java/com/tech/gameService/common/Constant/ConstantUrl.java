@@ -26,4 +26,5 @@ public class ConstantUrl {
     /* End URL Related to categories. */
 
     public static final String RATINGS = "ratings";
+    public static final String SLASH = "/";
 }
